@@ -15,12 +15,14 @@ import { Filters } from "./components/Filters";
 import { OpeningPositions } from "./components/OpeningPositions";
 
 type Tab = "dashboard" | "trades" | "positions";
+type ViewMode = "mobile" | "desktop";
 
 function App() {
   const [fills, setFills] = useState<NormalizedFill[]>([]);
   const [parseResults, setParseResults] = useState<ParseResult[]>([]);
   const [openingPositions, setOpeningPositions] = useState<OpeningPosition[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
+  const [viewMode, setViewMode] = useState<ViewMode>("desktop");
   const [filters, setFilters] = useState<FilterState>({
     dateFrom: "",
     dateTo: "",
@@ -91,7 +93,7 @@ function App() {
   }, [fills]);
 
   const tabClass = (tab: Tab) =>
-    `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+    `${viewMode === "mobile" ? "px-3 py-2 text-xs" : "px-4 py-2 text-sm"} font-medium rounded-t-lg transition-colors ${
       activeTab === tab
         ? "bg-white text-gray-900 border-b-2 border-blue-500"
         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -101,16 +103,45 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
             取引損益ビューア
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">
             SBI証券 約定履歴CSVを読み込み、実現損益を可視化します
-          </p>
+              </p>
+            </div>
+
+            <div className="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setViewMode("mobile")}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  viewMode === "mobile"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                スマホ対応モード
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("desktop")}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  viewMode === "desktop"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                デスクトップ対応モード
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <main className={`max-w-7xl mx-auto px-4 py-6 space-y-6 ${viewMode === "mobile" ? "max-w-3xl" : ""}`}>
         {/* Upload Area */}
         <FileUploader onFilesLoaded={handleFilesLoaded} onClear={handleClear} hasData={fills.length > 0} />
 
@@ -126,6 +157,7 @@ function App() {
               filters={filters}
               onChange={setFilters}
               accountTypes={accountTypes}
+              viewMode={viewMode}
             />
 
             {/* Tabs */}
@@ -150,7 +182,7 @@ function App() {
             )}
 
             {activeTab === "trades" && (
-              <TradeTable trades={displayTrades} />
+              <TradeTable trades={displayTrades} viewMode={viewMode} />
             )}
 
             {activeTab === "positions" && (
@@ -158,6 +190,7 @@ function App() {
                 positions={openingPositions}
                 onChange={setOpeningPositions}
                 missingCostSymbols={missingCostSymbols}
+                viewMode={viewMode}
               />
             )}
           </>

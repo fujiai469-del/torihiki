@@ -1,12 +1,15 @@
 import type { FilterState } from "../lib/types";
 
+type ViewMode = "mobile" | "desktop";
+
 type Props = {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   accountTypes: string[];
+  viewMode: ViewMode;
 };
 
-export function Filters({ filters, onChange, accountTypes }: Props) {
+export function Filters({ filters, onChange, accountTypes, viewMode }: Props) {
   const update = (partial: Partial<FilterState>) => {
     onChange({ ...filters, ...partial });
   };
@@ -14,31 +17,31 @@ export function Filters({ filters, onChange, accountTypes }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
       <h3 className="font-semibold text-gray-900 mb-3">フィルタ</h3>
-      <div className="flex flex-wrap gap-4 items-end">
-        <div>
+      <div className={`flex flex-wrap items-end ${viewMode === "mobile" ? "gap-3" : "gap-4"}`}>
+        <div className={viewMode === "mobile" ? "w-full sm:w-auto" : ""}>
           <label className="block text-xs text-gray-500 mb-1">期間（開始）</label>
           <input
             type="date"
             value={filters.dateFrom}
             onChange={(e) => update({ dateFrom: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : ""}`}
           />
         </div>
-        <div>
+        <div className={viewMode === "mobile" ? "w-full sm:w-auto" : ""}>
           <label className="block text-xs text-gray-500 mb-1">期間（終了）</label>
           <input
             type="date"
             value={filters.dateTo}
             onChange={(e) => update({ dateTo: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : ""}`}
           />
         </div>
-        <div>
+        <div className={viewMode === "mobile" ? "w-full sm:w-auto" : ""}>
           <label className="block text-xs text-gray-500 mb-1">口座区分</label>
           <select
             value={filters.accountType}
             onChange={(e) => update({ accountType: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : ""}`}
           >
             <option value="">すべて</option>
             {accountTypes.map((at) => (
@@ -48,17 +51,17 @@ export function Filters({ filters, onChange, accountTypes }: Props) {
             ))}
           </select>
         </div>
-        <div>
+        <div className={viewMode === "mobile" ? "w-full sm:w-auto" : ""}>
           <label className="block text-xs text-gray-500 mb-1">銘柄検索</label>
           <input
             type="text"
             value={filters.symbolSearch}
             onChange={(e) => update({ symbolSearch: e.target.value })}
             placeholder="銘柄名 or コード"
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : ""}`}
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center gap-2 ${viewMode === "mobile" ? "w-full" : ""}`}>
           <input
             type="checkbox"
             id="includeUncalculable"
