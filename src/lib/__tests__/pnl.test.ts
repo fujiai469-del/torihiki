@@ -76,7 +76,7 @@ describe("calculateRealizedPnl", () => {
     expect(missingCostSymbols[0].shortQty).toBe(100);
   });
 
-  it("fees/tax不明: realizedPnl=nullかつUNKNOWN_FEES_TAX", () => {
+  it("fees/tax不明: 0として概算し feesEstimated=true", () => {
     const fills: NormalizedFill[] = [
       makeFill({ tradeDate: "2024-01-10", symbolCode: "1234", side: "BUY", qty: 100, price: 1000, fees: 0, tax: 0 }),
       makeFill({ tradeDate: "2024-01-15", symbolCode: "1234", side: "SELL", qty: 100, price: 1200, fees: null, tax: null }),
@@ -85,8 +85,10 @@ describe("calculateRealizedPnl", () => {
     const { trades } = calculateRealizedPnl(fills);
 
     expect(trades).toHaveLength(1);
-    expect(trades[0].realizedPnl).toBeNull();
-    expect(trades[0].reasonIfNull).toBe("UNKNOWN_FEES_TAX");
+    // fees/tax不明でも計算はされる（0として概算）
+    expect(trades[0].realizedPnl).toBe(20000); // (1200-1000)*100 - 0 - 0
+    expect(trades[0].feesEstimated).toBe(true);
+    expect(trades[0].reasonIfNull).toBeUndefined();
   });
 
   it("期首ポジションを投入すると原価不明が解消される", () => {
@@ -125,21 +127,34 @@ describe("calculateRealizedPnl", () => {
 });
 
 describe("computeSummary", () => {
-  it("計算可能な取引のみで集計される", () => {
+  it("fees不明でも概算で計算され集計に含まれる", () => {
     const { trades } = calculateRealizedPnl([
       makeFill({ tradeDate: "2024-01-10", symbolCode: "1234", side: "BUY", qty: 100, price: 1000, fees: 0, tax: 0 }),
       makeFill({ tradeDate: "2024-01-15", symbolCode: "1234", side: "SELL", qty: 100, price: 1200, fees: 0, tax: 0 }),
-      // Another trade with unknown fees
+      // Another trade with unknown fees - now calculated as estimate
       makeFill({ tradeDate: "2024-01-10", symbolCode: "5678", side: "BUY", qty: 50, price: 2000, fees: 0, tax: 0 }),
       makeFill({ tradeDate: "2024-01-20", symbolCode: "5678", side: "SELL", qty: 50, price: 1800, fees: null, tax: null }),
     ]);
 
     const summary = computeSummary(trades);
 
-    expect(summary.calculableCount).toBe(1);
-    expect(summary.uncalculableCount).toBe(1);
-    expect(summary.totalPnl).toBe(20000); // Only the calculable trade
+    // Both trades are now calculable (fees-unknown treated as 0)
+    expect(summary.calculableCount).toBe(2);
+    expect(summary.uncalculableCount).toBe(0);
+    // 20000 + (1800-2000)*50 = 20000 + (-10000) = 10000
+    expect(summary.totalPnl).toBe(10000);
     expect(summary.winCount).toBe(1);
-    expect(summary.loseCount).toBe(0);
+    expect(summary.loseCount).toBe(1);
+  });
+
+  it("原価不明のみが計算不可になる", () => {
+    const { trades } = calculateRealizedPnl([
+      // SELL without BUY -> unknown cost
+      makeFill({ tradeDate: "2024-01-15", symbolCode: "9999", side: "SELL", qty: 10, price: 500, fees: 0, tax: 0 }),
+    ]);
+
+    const summary = computeSummary(trades);
+    expect(summary.calculableCount).toBe(0);
+    expect(summary.uncalculableCount).toBe(1);
   });
 });

@@ -25,7 +25,8 @@ export type RealizedTrade = {
   fees: number | null;
   tax: number | null;
   realizedPnl: number | null;
-  reasonIfNull?: "UNKNOWN_COST" | "UNKNOWN_FEES_TAX";
+  reasonIfNull?: "UNKNOWN_COST";
+  feesEstimated: boolean;       // true=手数料/税が不明のため0として概算
   accountType?: string;
 };
 

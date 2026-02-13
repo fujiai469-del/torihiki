@@ -148,6 +148,16 @@ export function Dashboard({ trades, missingCostSymbols }: Props) {
         />
       </div>
 
+      {/* Fees estimated info */}
+      {trades.some((t) => t.feesEstimated && t.realizedPnl !== null) && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm text-blue-700">
+            手数料/税額がCSVで「--」の取引は、手数料・税を0円として概算しています（SBI証券ゼロ革命/NISA非課税を想定）。
+            取引一覧の損益に「*」が付いた取引が該当します。
+          </p>
+        </div>
+      )}
+
       {/* Uncalculable / Missing Cost warnings */}
       {(summary.uncalculableCount > 0 || missingCostSymbols.length > 0) && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
@@ -156,7 +166,7 @@ export function Dashboard({ trades, missingCostSymbols }: Props) {
           </h4>
           {summary.uncalculableCount > 0 && (
             <p className="text-sm text-amber-700">
-              {summary.uncalculableCount}件の取引が計算不可です（原価不明/手数料・税不明）。
+              {summary.uncalculableCount}件の取引が計算不可です（原価不明：CSV期間外の買付データが必要）。
               集計値にはこれらは含まれていません。
             </p>
           )}

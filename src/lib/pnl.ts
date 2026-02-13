@@ -56,7 +56,7 @@ export function calculateRealizedPnl(
       let remainingQty = fill.qty;
       let totalBuyCost = 0;
       let hasCostUnknown = false;
-      let hasFeesUnknown = fill.fees === null || fill.tax === null;
+      const feesEstimated = fill.fees === null || fill.tax === null;
       const existingLots = lots.get(key) ?? [];
 
       while (remainingQty > 0 && existingLots.length > 0) {
@@ -64,9 +64,6 @@ export function calculateRealizedPnl(
         const matchQty = Math.min(remainingQty, lot.qty);
 
         totalBuyCost += lot.price * matchQty;
-        if (lot.fees === null) {
-          hasCostUnknown = true;
-        }
 
         lot.qty -= matchQty;
         remainingQty -= matchQty;
@@ -99,16 +96,14 @@ export function calculateRealizedPnl(
       const buyPriceAvg = matchedQty > 0 ? totalBuyCost / matchedQty : null;
 
       let realizedPnl: number | null = null;
-      let reasonIfNull: "UNKNOWN_COST" | "UNKNOWN_FEES_TAX" | undefined;
+      let reasonIfNull: "UNKNOWN_COST" | undefined;
 
       if (hasCostUnknown) {
         realizedPnl = null;
         reasonIfNull = "UNKNOWN_COST";
-      } else if (hasFeesUnknown) {
-        realizedPnl = null;
-        reasonIfNull = "UNKNOWN_FEES_TAX";
       } else {
-        // P&L = (sell_price - buy_avg_price) * qty - fees - tax
+        // P&L = (sell_price * qty) - totalBuyCost - fees - tax
+        // fees/tax が不明(null)の場合は 0 として概算（feesEstimated=true で注記）
         const sellRevenue = fill.price * fill.qty;
         const sellFees = (fill.fees ?? 0) + (fill.tax ?? 0);
         realizedPnl = sellRevenue - totalBuyCost - sellFees;
@@ -126,6 +121,7 @@ export function calculateRealizedPnl(
         tax: fill.tax ?? null,
         realizedPnl,
         reasonIfNull,
+        feesEstimated,
         accountType: fill.accountType,
       });
     }

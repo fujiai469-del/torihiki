@@ -20,8 +20,6 @@ function reasonLabel(reason?: string): string {
   switch (reason) {
     case "UNKNOWN_COST":
       return "原価不明（期首保有が必要）";
-    case "UNKNOWN_FEES_TAX":
-      return "手数料/税不明";
     default:
       return "計算不可";
   }
@@ -150,12 +148,17 @@ export function TradeTable({ trades }: Props) {
                 </td>
                 <td className="py-2 px-2 text-right font-medium">
                   {t.realizedPnl !== null ? (
-                    <span
-                      className={
-                        t.realizedPnl >= 0 ? "text-green-600" : "text-red-600"
-                      }
-                    >
-                      {formatYen(t.realizedPnl)}
+                    <span>
+                      <span
+                        className={
+                          t.realizedPnl >= 0 ? "text-green-600" : "text-red-600"
+                        }
+                      >
+                        {formatYen(t.realizedPnl)}
+                      </span>
+                      {t.feesEstimated && (
+                        <span className="text-gray-400 text-xs ml-1" title="手数料/税が不明のため0として概算">*</span>
+                      )}
                     </span>
                   ) : (
                     <span className="text-amber-600 text-xs">
