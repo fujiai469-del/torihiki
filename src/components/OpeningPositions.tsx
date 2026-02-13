@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { OpeningPosition } from "../lib/types";
 
+type ViewMode = "mobile" | "desktop";
+
 type Props = {
   positions: OpeningPosition[];
   onChange: (positions: OpeningPosition[]) => void;
+  viewMode: ViewMode;
   missingCostSymbols: {
     symbolCode: string;
     symbolName: string;
@@ -20,6 +23,7 @@ export function OpeningPositions({
   positions,
   onChange,
   missingCostSymbols,
+  viewMode,
 }: Props) {
   const [editForm, setEditForm] = useState({
     symbolCode: "",
@@ -100,14 +104,14 @@ export function OpeningPositions({
         <h4 className="text-sm font-semibold text-gray-900 mb-3">
           期首ポジション追加
         </h4>
-        <div className="flex flex-wrap gap-3 items-end">
+        <div className={`flex flex-wrap items-end ${viewMode === "mobile" ? "gap-2" : "gap-3"}`}>
           <div>
             <label className="block text-xs text-gray-500 mb-1">銘柄コード</label>
             <input
               type="text"
               value={editForm.symbolCode}
               onChange={(e) => setEditForm((f) => ({ ...f, symbolCode: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-24"
+              className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : "w-24"}`}
               placeholder="7203"
             />
           </div>
@@ -117,7 +121,7 @@ export function OpeningPositions({
               type="text"
               value={editForm.symbolName}
               onChange={(e) => setEditForm((f) => ({ ...f, symbolName: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
+              className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : "w-32"}`}
               placeholder="トヨタ自動車"
             />
           </div>
@@ -127,7 +131,7 @@ export function OpeningPositions({
               type="number"
               value={editForm.qty}
               onChange={(e) => setEditForm((f) => ({ ...f, qty: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-24"
+              className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : "w-24"}`}
               placeholder="100"
               min="1"
             />
@@ -138,7 +142,7 @@ export function OpeningPositions({
               type="number"
               value={editForm.avgCost}
               onChange={(e) => setEditForm((f) => ({ ...f, avgCost: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-28"
+              className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : "w-28"}`}
               placeholder="2500"
               min="0"
             />
@@ -149,13 +153,13 @@ export function OpeningPositions({
               type="text"
               value={editForm.accountType}
               onChange={(e) => setEditForm((f) => ({ ...f, accountType: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-20"
+              className={`border border-gray-300 rounded px-2 py-1 text-sm ${viewMode === "mobile" ? "w-full" : "w-20"}`}
               placeholder="特定"
             />
           </div>
           <button
             onClick={handleAdd}
-            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+            className={`bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors ${viewMode === "mobile" ? "w-full" : ""}`}
           >
             追加
           </button>
@@ -168,7 +172,11 @@ export function OpeningPositions({
           登録済みポジション
         </h4>
         {positions.length > 0 ? (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            {viewMode === "mobile" && (
+              <p className="text-xs text-gray-500 mb-2">横スクロールで全項目を確認できます。</p>
+            )}
+          <table className={`w-full ${viewMode === "mobile" ? "text-xs min-w-[720px]" : "text-sm"}`}>
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="text-left py-2 px-2">銘柄</th>
@@ -203,6 +211,7 @@ export function OpeningPositions({
               ))}
             </tbody>
           </table>
+          </div>
         ) : (
           <p className="text-sm text-gray-400 text-center py-4">
             期首ポジションが登録されていません

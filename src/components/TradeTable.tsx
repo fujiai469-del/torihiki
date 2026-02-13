@@ -1,8 +1,11 @@
 import { useState, useMemo } from "react";
 import type { RealizedTrade } from "../lib/types";
 
+type ViewMode = "mobile" | "desktop";
+
 type Props = {
   trades: RealizedTrade[];
+  viewMode: ViewMode;
 };
 
 type SortKey = "tradeDate" | "symbolName" | "qty" | "sellPrice" | "realizedPnl";
@@ -25,7 +28,7 @@ function reasonLabel(reason?: string): string {
   }
 }
 
-export function TradeTable({ trades }: Props) {
+export function TradeTable({ trades, viewMode }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>("tradeDate");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
@@ -75,7 +78,10 @@ export function TradeTable({ trades }: Props) {
         取引一覧 ({trades.length}件)
       </h4>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        {viewMode === "mobile" && (
+          <p className="text-xs text-gray-500 mb-2">横スクロールで全項目を確認できます。</p>
+        )}
+        <table className={`w-full ${viewMode === "mobile" ? "text-xs min-w-[900px]" : "text-sm"}`}>
           <thead>
             <tr className="border-b border-gray-200">
               <th
