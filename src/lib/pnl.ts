@@ -182,7 +182,6 @@ export function computeSummary(trades: RealizedTrade[]): PnlSummary {
 export function computeSymbolSummaries(trades: RealizedTrade[]): SymbolSummary[] {
   const map = new Map<string, RealizedTrade[]>();
   for (const t of trades) {
-    if (t.realizedPnl === null) continue;
     const existing = map.get(t.symbolCode) ?? [];
     existing.push(t);
     map.set(t.symbolCode, existing);
@@ -190,9 +189,11 @@ export function computeSymbolSummaries(trades: RealizedTrade[]): SymbolSummary[]
 
   const summaries: SymbolSummary[] = [];
   for (const [symbolCode, symTrades] of map) {
-    const wins = symTrades.filter((t) => t.realizedPnl! > 0);
-    const losses = symTrades.filter((t) => t.realizedPnl! < 0);
-    const totalPnl = symTrades.reduce((sum, t) => sum + t.realizedPnl!, 0);
+    const calculable = symTrades.filter((t) => t.realizedPnl !== null);
+    const uncalculable = symTrades.filter((t) => t.realizedPnl === null);
+    const wins = calculable.filter((t) => t.realizedPnl! > 0);
+    const losses = calculable.filter((t) => t.realizedPnl! < 0);
+    const totalPnl = calculable.reduce((sum, t) => sum + t.realizedPnl!, 0);
     summaries.push({
       symbolCode,
       symbolName: symTrades[0].symbolName,
@@ -200,8 +201,9 @@ export function computeSymbolSummaries(trades: RealizedTrade[]): SymbolSummary[]
       winCount: wins.length,
       loseCount: losses.length,
       tradeCount: symTrades.length,
-      avgPnl: totalPnl / symTrades.length,
-      winRate: symTrades.length > 0 ? wins.length / symTrades.length : 0,
+      avgPnl: calculable.length > 0 ? totalPnl / calculable.length : 0,
+      winRate: calculable.length > 0 ? wins.length / calculable.length : 0,
+      uncalculableCount: uncalculable.length,
     });
   }
 

@@ -78,6 +78,7 @@ export type SymbolSummary = {
   tradeCount: number;
   avgPnl: number;
   winRate: number;
+  uncalculableCount: number;   // 原価不明の取引数
 };
 
 export type FilterState = {

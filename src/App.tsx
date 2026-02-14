@@ -5,6 +5,10 @@ import type {
   ParseResult,
   FilterState,
 } from "./lib/types";
+
+function generateId(): string {
+  return Math.random().toString(36).substring(2, 9);
+}
 import { parseCSV, decodeShiftJIS } from "./lib/parser";
 import { calculateRealizedPnl } from "./lib/pnl";
 import { FileUploader } from "./components/FileUploader";
@@ -53,6 +57,14 @@ function App() {
     setFills([]);
     setParseResults([]);
   }, []);
+
+  const handleAddPosition = useCallback(
+    (pos: Omit<OpeningPosition, "id">) => {
+      const newPos: OpeningPosition = { ...pos, id: generateId() };
+      setOpeningPositions((prev) => [...prev, newPos]);
+    },
+    []
+  );
 
   // Filter fills
   const filteredFills = useMemo(() => {
@@ -146,6 +158,7 @@ function App() {
               <Dashboard
                 trades={displayTrades}
                 missingCostSymbols={missingCostSymbols}
+                onAddPosition={handleAddPosition}
               />
             )}
 

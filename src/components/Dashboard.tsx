@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import type { RealizedTrade } from "../lib/types";
+import { useMemo, useState } from "react";
+import type { RealizedTrade, OpeningPosition } from "../lib/types";
 import {
   computeSummary,
   computeSymbolSummaries,
@@ -19,14 +19,17 @@ import {
   ReferenceLine,
 } from "recharts";
 
+type MissingCostSymbol = {
+  symbolCode: string;
+  symbolName: string;
+  shortQty: number;
+  accountType: string;
+};
+
 type Props = {
   trades: RealizedTrade[];
-  missingCostSymbols: {
-    symbolCode: string;
-    symbolName: string;
-    shortQty: number;
-    accountType: string;
-  }[];
+  missingCostSymbols: MissingCostSymbol[];
+  onAddPosition?: (position: Omit<OpeningPosition, "id">) => void;
 };
 
 function formatYen(n: number): string {
@@ -61,7 +64,68 @@ function KpiCard({
   );
 }
 
-export function Dashboard({ trades, missingCostSymbols }: Props) {
+function MissingCostForm({
+  symbol,
+  onSubmit,
+}: {
+  symbol: MissingCostSymbol;
+  onSubmit: (position: Omit<OpeningPosition, "id">) => void;
+}) {
+  const [symbolName, setSymbolName] = useState(symbol.symbolName);
+  const [avgCost, setAvgCost] = useState("");
+
+  const handleSubmit = () => {
+    const cost = Number(avgCost);
+    if (isNaN(cost) || cost <= 0) {
+      alert("取得単価を正の数で入力してください");
+      return;
+    }
+    onSubmit({
+      symbolCode: symbol.symbolCode,
+      symbolName: symbolName || symbol.symbolCode,
+      qty: symbol.shortQty,
+      avgCost: cost,
+      accountType: symbol.accountType,
+    });
+    setAvgCost("");
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 py-2 border-b border-amber-100 last:border-b-0">
+      <span className="text-sm text-amber-800 font-medium min-w-[60px]">
+        {symbol.symbolCode}
+      </span>
+      <input
+        type="text"
+        value={symbolName}
+        onChange={(e) => setSymbolName(e.target.value)}
+        className="border border-amber-300 rounded px-2 py-1 text-sm w-32 bg-white"
+        placeholder="銘柄名"
+      />
+      <span className="text-xs text-amber-600">{symbol.shortQty}株</span>
+      {symbol.accountType && (
+        <span className="text-xs text-amber-500">[{symbol.accountType}]</span>
+      )}
+      <input
+        type="number"
+        value={avgCost}
+        onChange={(e) => setAvgCost(e.target.value)}
+        className="border border-amber-300 rounded px-2 py-1 text-sm w-28 bg-white"
+        placeholder="取得単価"
+        min="0"
+        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+      />
+      <button
+        onClick={handleSubmit}
+        className="bg-amber-600 text-white px-3 py-1 rounded text-sm hover:bg-amber-700 transition-colors"
+      >
+        登録
+      </button>
+    </div>
+  );
+}
+
+export function Dashboard({ trades, missingCostSymbols, onAddPosition }: Props) {
   const summary = useMemo(() => computeSummary(trades), [trades]);
   const symbolSummaries = useMemo(() => computeSymbolSummaries(trades), [trades]);
   const cumSeries = useMemo(() => getCumulativePnlSeries(trades), [trades]);
@@ -158,35 +222,31 @@ export function Dashboard({ trades, missingCostSymbols }: Props) {
         </div>
       )}
 
-      {/* Uncalculable / Missing Cost warnings */}
+      {/* Uncalculable / Missing Cost — inline position input */}
       {(summary.uncalculableCount > 0 || missingCostSymbols.length > 0) && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
           <h4 className="text-sm font-semibold text-amber-800 mb-2">
-            注意: 計算不可トレード
+            取得単価の入力が必要な銘柄があります
           </h4>
-          {summary.uncalculableCount > 0 && (
-            <p className="text-sm text-amber-700">
-              {summary.uncalculableCount}件の取引が計算不可です（原価不明：CSV期間外の買付データが必要）。
-              集計値にはこれらは含まれていません。
-            </p>
-          )}
-          {missingCostSymbols.length > 0 && (
-            <div className="mt-2">
-              <p className="text-sm text-amber-700 font-medium">
-                期首保有が必要な銘柄:
-              </p>
-              <ul className="text-sm text-amber-700 mt-1 list-disc list-inside">
-                {missingCostSymbols.map((s) => (
-                  <li key={`${s.symbolCode}-${s.accountType}`}>
-                    {s.symbolName} ({s.symbolCode}) - 不足数量: {s.shortQty}株
-                    {s.accountType && ` [${s.accountType}]`}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs text-amber-600 mt-1">
-                「期首ポジション」タブで取得単価を入力すると再計算されます。
-              </p>
+          <p className="text-sm text-amber-700 mb-3">
+            {summary.uncalculableCount}件の取引で原価が不明です（CSV期間外の買付データが必要）。
+            以下で取得単価を入力すると損益が再計算されます。
+          </p>
+          {missingCostSymbols.length > 0 && onAddPosition && (
+            <div className="space-y-1">
+              {missingCostSymbols.map((s) => (
+                <MissingCostForm
+                  key={`${s.symbolCode}-${s.accountType}`}
+                  symbol={s}
+                  onSubmit={onAddPosition}
+                />
+              ))}
             </div>
+          )}
+          {missingCostSymbols.length > 0 && !onAddPosition && (
+            <p className="text-xs text-amber-600 mt-1">
+              「期首ポジション」タブで取得単価を入力すると再計算されます。
+            </p>
           )}
         </div>
       )}
@@ -294,7 +354,13 @@ export function Dashboard({ trades, missingCostSymbols }: Props) {
                   {symbolRanking.map((entry, index) => (
                     <Cell
                       key={index}
-                      fill={entry.totalPnl >= 0 ? "#16a34a" : "#dc2626"}
+                      fill={
+                        entry.uncalculableCount > 0 && entry.tradeCount === entry.uncalculableCount
+                          ? "#d97706"
+                          : entry.totalPnl >= 0
+                            ? "#16a34a"
+                            : "#dc2626"
+                      }
                     />
                   ))}
                 </Bar>
@@ -323,31 +389,59 @@ export function Dashboard({ trades, missingCostSymbols }: Props) {
                 <th className="text-right py-2 px-2">勝率</th>
                 <th className="text-right py-2 px-2">取引数</th>
                 <th className="text-right py-2 px-2">平均損益</th>
+                <th className="text-center py-2 px-2">状態</th>
               </tr>
             </thead>
             <tbody>
               {symbolSummaries.map((s) => (
                 <tr
                   key={s.symbolCode}
-                  className="border-b border-gray-100 hover:bg-gray-50"
+                  className={`border-b border-gray-100 hover:bg-gray-50 ${
+                    s.uncalculableCount > 0 ? "bg-amber-50" : ""
+                  }`}
                 >
                   <td className="py-2 px-2">{s.symbolName}</td>
                   <td className="py-2 px-2 text-gray-500">{s.symbolCode}</td>
                   <td
                     className={`py-2 px-2 text-right font-medium ${
-                      s.totalPnl >= 0 ? "text-green-600" : "text-red-600"
+                      s.uncalculableCount > 0 && s.tradeCount === s.uncalculableCount
+                        ? "text-amber-600"
+                        : s.totalPnl >= 0
+                          ? "text-green-600"
+                          : "text-red-600"
                     }`}
                   >
-                    {formatYen(s.totalPnl)}
+                    {s.uncalculableCount > 0 && s.tradeCount === s.uncalculableCount
+                      ? "要入力"
+                      : formatYen(s.totalPnl)}
                   </td>
-                  <td className="py-2 px-2 text-right">{formatPct(s.winRate)}</td>
+                  <td className="py-2 px-2 text-right">
+                    {s.uncalculableCount > 0 && s.tradeCount === s.uncalculableCount
+                      ? "---"
+                      : formatPct(s.winRate)}
+                  </td>
                   <td className="py-2 px-2 text-right">{s.tradeCount}</td>
                   <td
                     className={`py-2 px-2 text-right ${
-                      s.avgPnl >= 0 ? "text-green-600" : "text-red-600"
+                      s.uncalculableCount > 0 && s.tradeCount === s.uncalculableCount
+                        ? "text-amber-600"
+                        : s.avgPnl >= 0
+                          ? "text-green-600"
+                          : "text-red-600"
                     }`}
                   >
-                    {formatYen(s.avgPnl)}
+                    {s.uncalculableCount > 0 && s.tradeCount === s.uncalculableCount
+                      ? "---"
+                      : formatYen(s.avgPnl)}
+                  </td>
+                  <td className="py-2 px-2 text-center">
+                    {s.uncalculableCount > 0 ? (
+                      <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                        {s.uncalculableCount}件 要入力
+                      </span>
+                    ) : (
+                      <span className="text-xs text-green-600">OK</span>
+                    )}
                   </td>
                 </tr>
               ))}
