@@ -91,36 +91,38 @@ function MissingCostForm({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 py-2 border-b border-amber-100 last:border-b-0">
-      <span className="text-sm text-amber-800 font-medium min-w-[60px]">
-        {symbol.symbolCode}
-      </span>
-      <input
-        type="text"
-        value={symbolName}
-        onChange={(e) => setSymbolName(e.target.value)}
-        className="border border-amber-300 rounded px-2 py-1 text-sm w-32 bg-white"
-        placeholder="銘柄名"
-      />
-      <span className="text-xs text-amber-600">{symbol.shortQty}株</span>
-      {symbol.accountType && (
-        <span className="text-xs text-amber-500">[{symbol.accountType}]</span>
-      )}
-      <input
-        type="number"
-        value={avgCost}
-        onChange={(e) => setAvgCost(e.target.value)}
-        className="border border-amber-300 rounded px-2 py-1 text-sm w-28 bg-white"
-        placeholder="取得単価"
-        min="0"
-        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-      />
-      <button
-        onClick={handleSubmit}
-        className="bg-amber-600 text-white px-3 py-1 rounded text-sm hover:bg-amber-700 transition-colors"
-      >
-        登録
-      </button>
+    <div className="overflow-x-auto py-2 border-b border-amber-100 last:border-b-0">
+      <div className="flex items-center gap-2 min-w-max">
+        <span className="text-sm text-amber-800 font-medium whitespace-nowrap">
+          {symbol.symbolCode}
+        </span>
+        <input
+          type="text"
+          value={symbolName}
+          onChange={(e) => setSymbolName(e.target.value)}
+          className="border border-amber-300 rounded px-2 py-1 text-sm w-28 bg-white shrink-0"
+          placeholder="銘柄名"
+        />
+        <span className="text-xs text-amber-600 whitespace-nowrap">{symbol.shortQty}株</span>
+        {symbol.accountType && (
+          <span className="text-xs text-amber-500 whitespace-nowrap">[{symbol.accountType}]</span>
+        )}
+        <input
+          type="number"
+          value={avgCost}
+          onChange={(e) => setAvgCost(e.target.value)}
+          className="border border-amber-300 rounded px-2 py-1 text-sm w-24 bg-white shrink-0"
+          placeholder="取得単価"
+          min="0"
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+        />
+        <button
+          onClick={handleSubmit}
+          className="bg-amber-600 text-white px-3 py-1 rounded text-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0"
+        >
+          登録
+        </button>
+      </div>
     </div>
   );
 }
