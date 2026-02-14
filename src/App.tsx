@@ -103,26 +103,26 @@ function App() {
   }, [fills]);
 
   const tabClass = (tab: Tab) =>
-    `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+    `px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${
       activeTab === tab
-        ? "bg-white text-gray-900 border-b-2 border-blue-500"
-        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        ? "bg-white text-claude-terra border-b-2 border-claude-terra"
+        : "bg-claude-cream-dark text-claude-text-secondary hover:bg-claude-border-light hover:text-claude-text"
     }`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
+    <div className="min-h-screen bg-claude-cream">
+      <header className="bg-claude-dark shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6">
+          <h1 className="text-xl font-bold text-white tracking-wide">
             取引損益ビューア
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-claude-terra-light mt-1">
             SBI証券 約定履歴CSVを読み込み、実現損益を可視化します
           </p>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 space-y-6">
         {/* Upload Area */}
         <FileUploader onFilesLoaded={handleFilesLoaded} onClear={handleClear} hasData={fills.length > 0} />
 
@@ -141,7 +141,7 @@ function App() {
             />
 
             {/* Tabs */}
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <button className={tabClass("dashboard")} onClick={() => setActiveTab("dashboard")}>
                 ダッシュボード
               </button>

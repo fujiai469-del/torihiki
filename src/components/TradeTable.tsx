@@ -19,7 +19,7 @@ function formatYen(n: number): string {
 function reasonLabel(reason?: string): string {
   switch (reason) {
     case "UNKNOWN_COST":
-      return "原価不明（期首保有が必要）";
+      return "原価不明";
     default:
       return "計算不可";
   }
@@ -70,45 +70,45 @@ export function TradeTable({ trades }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+    <div className="bg-white rounded-lg shadow-sm border border-claude-border p-4">
+      <h4 className="text-sm font-semibold text-claude-text mb-3">
         取引一覧 ({trades.length}件)
       </h4>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-4 px-4">
+        <table className="w-full text-sm" style={{ minWidth: 800 }}>
           <thead>
-            <tr className="border-b border-gray-200">
+            <tr className="border-b-2 border-claude-border">
               <th
-                className="text-left py-2 px-2 cursor-pointer hover:text-blue-600"
+                className="text-left py-2.5 px-3 whitespace-nowrap cursor-pointer hover:text-claude-terra font-semibold text-claude-text"
                 onClick={() => toggleSort("tradeDate")}
               >
                 約定日{sortIndicator("tradeDate")}
               </th>
               <th
-                className="text-left py-2 px-2 cursor-pointer hover:text-blue-600"
+                className="text-left py-2.5 px-3 whitespace-nowrap cursor-pointer hover:text-claude-terra font-semibold text-claude-text"
                 onClick={() => toggleSort("symbolName")}
               >
                 銘柄{sortIndicator("symbolName")}
               </th>
-              <th className="text-left py-2 px-2">コード</th>
-              <th className="text-left py-2 px-2">口座</th>
+              <th className="text-left py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">コード</th>
+              <th className="text-left py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">口座</th>
               <th
-                className="text-right py-2 px-2 cursor-pointer hover:text-blue-600"
+                className="text-right py-2.5 px-3 whitespace-nowrap cursor-pointer hover:text-claude-terra font-semibold text-claude-text"
                 onClick={() => toggleSort("qty")}
               >
                 数量{sortIndicator("qty")}
               </th>
               <th
-                className="text-right py-2 px-2 cursor-pointer hover:text-blue-600"
+                className="text-right py-2.5 px-3 whitespace-nowrap cursor-pointer hover:text-claude-terra font-semibold text-claude-text"
                 onClick={() => toggleSort("sellPrice")}
               >
                 売単価{sortIndicator("sellPrice")}
               </th>
-              <th className="text-right py-2 px-2">買平均</th>
-              <th className="text-right py-2 px-2">手数料</th>
-              <th className="text-right py-2 px-2">税</th>
+              <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">買平均</th>
+              <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">手数料</th>
+              <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">税</th>
               <th
-                className="text-right py-2 px-2 cursor-pointer hover:text-blue-600"
+                className="text-right py-2.5 px-3 whitespace-nowrap cursor-pointer hover:text-claude-terra font-semibold text-claude-text"
                 onClick={() => toggleSort("realizedPnl")}
               >
                 損益{sortIndicator("realizedPnl")}
@@ -119,34 +119,34 @@ export function TradeTable({ trades }: Props) {
             {sorted.map((t, i) => (
               <tr
                 key={i}
-                className={`border-b border-gray-100 hover:bg-gray-50 ${
-                  t.realizedPnl === null ? "bg-amber-50" : ""
+                className={`border-b border-claude-border-light hover:bg-claude-cream ${
+                  t.realizedPnl === null ? "bg-claude-terra-light/30" : ""
                 }`}
               >
-                <td className="py-2 px-2">{t.tradeDate}</td>
-                <td className="py-2 px-2">{t.symbolName}</td>
-                <td className="py-2 px-2 text-gray-500">{t.symbolCode}</td>
-                <td className="py-2 px-2 text-gray-500 text-xs">
+                <td className="py-2.5 px-3 whitespace-nowrap">{t.tradeDate}</td>
+                <td className="py-2.5 px-3 whitespace-nowrap">{t.symbolName}</td>
+                <td className="py-2.5 px-3 whitespace-nowrap text-claude-text-secondary">{t.symbolCode}</td>
+                <td className="py-2.5 px-3 whitespace-nowrap text-claude-text-secondary text-xs">
                   {t.accountType ?? "---"}
                 </td>
-                <td className="py-2 px-2 text-right">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap">
                   {t.qty.toLocaleString()}
                 </td>
-                <td className="py-2 px-2 text-right">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap">
                   {formatYen(t.sellPrice)}
                 </td>
-                <td className="py-2 px-2 text-right">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap">
                   {t.buyPriceAvg !== null
                     ? formatYen(Math.round(t.buyPriceAvg))
                     : "不明"}
                 </td>
-                <td className="py-2 px-2 text-right text-gray-500">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap text-claude-text-secondary">
                   {t.fees !== null ? formatYen(t.fees) : "不明"}
                 </td>
-                <td className="py-2 px-2 text-right text-gray-500">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap text-claude-text-secondary">
                   {t.tax !== null ? formatYen(t.tax) : "不明"}
                 </td>
-                <td className="py-2 px-2 text-right font-medium">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap font-medium">
                   {t.realizedPnl !== null ? (
                     <span>
                       <span
@@ -157,7 +157,7 @@ export function TradeTable({ trades }: Props) {
                         {formatYen(t.realizedPnl)}
                       </span>
                       {t.feesEstimated && (
-                        <span className="text-gray-400 text-xs ml-1" title="手数料/税が不明のため0として概算">*</span>
+                        <span className="text-claude-text-secondary text-xs ml-1" title="手数料/税が不明のため0として概算">*</span>
                       )}
                     </span>
                   ) : (
@@ -171,7 +171,7 @@ export function TradeTable({ trades }: Props) {
           </tbody>
         </table>
         {trades.length === 0 && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-claude-text-secondary">
             SELL取引がありません
           </div>
         )}

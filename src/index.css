@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  /* Claude-inspired color palette */
+  --color-claude-cream: #FAF9F7;
+  --color-claude-cream-dark: #F0EDE8;
+  --color-claude-terra: #D97757;
+  --color-claude-terra-dark: #B8541A;
+  --color-claude-terra-light: #F5DDD3;
+  --color-claude-dark: #1A1613;
+  --color-claude-dark-soft: #2D2B27;
+  --color-claude-text: #3D3929;
+  --color-claude-text-secondary: #6B6560;
+  --color-claude-border: #E0DBD5;
+  --color-claude-border-light: #EBE7E2;
+}

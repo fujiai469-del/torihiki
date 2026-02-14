@@ -12,33 +12,33 @@ export function Filters({ filters, onChange, accountTypes }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      <h3 className="font-semibold text-gray-900 mb-3">フィルタ</h3>
+    <div className="bg-white rounded-lg shadow-sm border border-claude-border p-4">
+      <h3 className="font-semibold text-claude-text mb-3">フィルタ</h3>
       <div className="flex flex-wrap gap-4 items-end">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">期間（開始）</label>
+          <label className="block text-xs text-claude-text-secondary mb-1">期間（開始）</label>
           <input
             type="date"
             value={filters.dateFrom}
             onChange={(e) => update({ dateFrom: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className="border border-claude-border rounded px-2 py-1.5 text-sm focus:border-claude-terra focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">期間（終了）</label>
+          <label className="block text-xs text-claude-text-secondary mb-1">期間（終了）</label>
           <input
             type="date"
             value={filters.dateTo}
             onChange={(e) => update({ dateTo: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className="border border-claude-border rounded px-2 py-1.5 text-sm focus:border-claude-terra focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">口座区分</label>
+          <label className="block text-xs text-claude-text-secondary mb-1">口座区分</label>
           <select
             value={filters.accountType}
             onChange={(e) => update({ accountType: e.target.value })}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className="border border-claude-border rounded px-2 py-1.5 text-sm focus:border-claude-terra focus:outline-none"
           >
             <option value="">すべて</option>
             {accountTypes.map((at) => (
@@ -49,13 +49,13 @@ export function Filters({ filters, onChange, accountTypes }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">銘柄検索</label>
+          <label className="block text-xs text-claude-text-secondary mb-1">銘柄検索</label>
           <input
             type="text"
             value={filters.symbolSearch}
             onChange={(e) => update({ symbolSearch: e.target.value })}
             placeholder="銘柄名 or コード"
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
+            className="border border-claude-border rounded px-2 py-1.5 text-sm focus:border-claude-terra focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -64,9 +64,9 @@ export function Filters({ filters, onChange, accountTypes }: Props) {
             id="includeUncalculable"
             checked={filters.includeUncalculable}
             onChange={(e) => update({ includeUncalculable: e.target.checked })}
-            className="rounded"
+            className="rounded accent-claude-terra"
           />
-          <label htmlFor="includeUncalculable" className="text-sm text-gray-600">
+          <label htmlFor="includeUncalculable" className="text-sm text-claude-text-secondary">
             計算不可を含む
           </label>
         </div>

@@ -45,12 +45,12 @@ export function FileUploader({ onFilesLoaded, onClear, hasData }: Props) {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-claude-border p-6">
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
           isDragging
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-300 hover:border-gray-400"
+            ? "border-claude-terra bg-claude-terra-light/30"
+            : "border-claude-border hover:border-claude-terra/50"
         }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -68,14 +68,14 @@ export function FileUploader({ onFilesLoaded, onClear, hasData }: Props) {
             e.target.value = "";
           }}
         />
-        <div className="text-gray-500">
-          <p className="text-lg font-medium">
+        <div className="text-claude-text-secondary">
+          <p className="text-lg font-medium text-claude-text">
             CSVファイルをドラッグ&ドロップ
           </p>
           <p className="text-sm mt-1">
             またはクリックしてファイルを選択（複数可）
           </p>
-          <p className="text-xs mt-2 text-gray-400">
+          <p className="text-xs mt-2 text-claude-text-secondary/70">
             SBI証券「約定履歴照会」CSV対応（Shift_JIS / UTF-8）
           </p>
         </div>

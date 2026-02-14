@@ -12,27 +12,27 @@ export function ParseSummary({ results }: Props) {
   const allErrors = results.flatMap((r) => r.errors);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      <h3 className="font-semibold text-gray-900 mb-2">解析結果</h3>
+    <div className="bg-white rounded-lg shadow-sm border border-claude-border p-4">
+      <h3 className="font-semibold text-claude-text mb-2">解析結果</h3>
       <div className="flex flex-wrap gap-4 text-sm">
         <div>
-          <span className="text-gray-500">取込行数:</span>{" "}
-          <span className="font-medium">{totalRows}</span>
+          <span className="text-claude-text-secondary">取込行数:</span>{" "}
+          <span className="font-medium text-claude-text">{totalRows}</span>
         </div>
         <div>
-          <span className="text-gray-500">成功:</span>{" "}
+          <span className="text-claude-text-secondary">成功:</span>{" "}
           <span className="font-medium text-green-600">{successRows}</span>
         </div>
         {failedRows > 0 && (
           <div>
-            <span className="text-gray-500">失敗:</span>{" "}
+            <span className="text-claude-text-secondary">失敗:</span>{" "}
             <span className="font-medium text-red-600">{failedRows}</span>
           </div>
         )}
         {unknownFieldCount > 0 && (
           <div>
-            <span className="text-gray-500">不明項目:</span>{" "}
-            <span className="font-medium text-amber-600">
+            <span className="text-claude-text-secondary">不明項目:</span>{" "}
+            <span className="font-medium text-claude-terra">
               {unknownFieldCount}
             </span>
           </div>

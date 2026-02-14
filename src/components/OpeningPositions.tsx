@@ -66,11 +66,11 @@ export function OpeningPositions({
     <div className="space-y-4">
       {/* Missing cost symbols */}
       {missingCostSymbols.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-amber-800 mb-2">
+        <div className="bg-claude-terra-light/30 border border-claude-terra-light rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-claude-terra-dark mb-2">
             期首保有が必要な銘柄
           </h4>
-          <p className="text-xs text-amber-700 mb-2">
+          <p className="text-xs text-claude-terra mb-2">
             以下の銘柄は売却時にBUYロットが不足しています。取得単価を入力してください。
           </p>
           <div className="space-y-1">
@@ -79,13 +79,13 @@ export function OpeningPositions({
                 key={`${m.symbolCode}-${m.accountType}`}
                 className="flex items-center gap-2 text-sm"
               >
-                <span className="text-amber-800">
+                <span className="text-claude-terra-dark">
                   {m.symbolName} ({m.symbolCode}) - {m.shortQty}株
                   {m.accountType && ` [${m.accountType}]`}
                 </span>
                 <button
                   onClick={() => handleAddFromMissing(m)}
-                  className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  className="text-xs text-claude-terra hover:text-claude-terra-dark underline"
                 >
                   入力フォームに反映
                 </button>
@@ -96,66 +96,66 @@ export function OpeningPositions({
       )}
 
       {/* Input form */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h4 className="text-sm font-semibold text-gray-900 mb-3">
+      <div className="bg-white rounded-lg shadow-sm border border-claude-border p-4">
+        <h4 className="text-sm font-semibold text-claude-text mb-3">
           期首ポジション追加
         </h4>
         <div className="flex flex-wrap gap-3 items-end">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">銘柄コード</label>
+            <label className="block text-xs text-claude-text-secondary mb-1">銘柄コード</label>
             <input
               type="text"
               value={editForm.symbolCode}
               onChange={(e) => setEditForm((f) => ({ ...f, symbolCode: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-24"
+              className="border border-claude-border rounded px-2 py-1.5 text-sm w-24 focus:border-claude-terra focus:outline-none"
               placeholder="7203"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">銘柄名</label>
+            <label className="block text-xs text-claude-text-secondary mb-1">銘柄名</label>
             <input
               type="text"
               value={editForm.symbolName}
               onChange={(e) => setEditForm((f) => ({ ...f, symbolName: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
+              className="border border-claude-border rounded px-2 py-1.5 text-sm w-32 focus:border-claude-terra focus:outline-none"
               placeholder="トヨタ自動車"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">数量</label>
+            <label className="block text-xs text-claude-text-secondary mb-1">数量</label>
             <input
               type="number"
               value={editForm.qty}
               onChange={(e) => setEditForm((f) => ({ ...f, qty: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-24"
+              className="border border-claude-border rounded px-2 py-1.5 text-sm w-24 focus:border-claude-terra focus:outline-none"
               placeholder="100"
               min="1"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">平均取得単価</label>
+            <label className="block text-xs text-claude-text-secondary mb-1">平均取得単価</label>
             <input
               type="number"
               value={editForm.avgCost}
               onChange={(e) => setEditForm((f) => ({ ...f, avgCost: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-28"
+              className="border border-claude-border rounded px-2 py-1.5 text-sm w-28 focus:border-claude-terra focus:outline-none"
               placeholder="2500"
               min="0"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">口座区分</label>
+            <label className="block text-xs text-claude-text-secondary mb-1">口座区分</label>
             <input
               type="text"
               value={editForm.accountType}
               onChange={(e) => setEditForm((f) => ({ ...f, accountType: e.target.value }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm w-20"
+              className="border border-claude-border rounded px-2 py-1.5 text-sm w-20 focus:border-claude-terra focus:outline-none"
               placeholder="特定"
             />
           </div>
           <button
             onClick={handleAdd}
-            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+            className="bg-claude-terra text-white px-4 py-1.5 rounded text-sm hover:bg-claude-terra-dark transition-colors"
           >
             追加
           </button>
@@ -163,48 +163,50 @@ export function OpeningPositions({
       </div>
 
       {/* Position list */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h4 className="text-sm font-semibold text-gray-900 mb-3">
+      <div className="bg-white rounded-lg shadow-sm border border-claude-border p-4">
+        <h4 className="text-sm font-semibold text-claude-text mb-3">
           登録済みポジション
         </h4>
         {positions.length > 0 ? (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-2">銘柄</th>
-                <th className="text-left py-2 px-2">コード</th>
-                <th className="text-right py-2 px-2">数量</th>
-                <th className="text-right py-2 px-2">取得単価</th>
-                <th className="text-left py-2 px-2">口座</th>
-                <th className="text-right py-2 px-2">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {positions.map((p) => (
-                <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-2 px-2">{p.symbolName}</td>
-                  <td className="py-2 px-2 text-gray-500">{p.symbolCode}</td>
-                  <td className="py-2 px-2 text-right">
-                    {p.qty.toLocaleString()}
-                  </td>
-                  <td className="py-2 px-2 text-right">
-                    {p.avgCost.toLocaleString()}円
-                  </td>
-                  <td className="py-2 px-2 text-gray-500">{p.accountType || "---"}</td>
-                  <td className="py-2 px-2 text-right">
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      className="text-red-600 hover:text-red-800 text-xs underline"
-                    >
-                      削除
-                    </button>
-                  </td>
+          <div className="overflow-x-auto -mx-4 px-4">
+            <table className="w-full text-sm" style={{ minWidth: 500 }}>
+              <thead>
+                <tr className="border-b-2 border-claude-border">
+                  <th className="text-left py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">銘柄</th>
+                  <th className="text-left py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">コード</th>
+                  <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">数量</th>
+                  <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">取得単価</th>
+                  <th className="text-left py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">口座</th>
+                  <th className="text-right py-2.5 px-3 whitespace-nowrap font-semibold text-claude-text">操作</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {positions.map((p) => (
+                  <tr key={p.id} className="border-b border-claude-border-light hover:bg-claude-cream">
+                    <td className="py-2.5 px-3 whitespace-nowrap">{p.symbolName}</td>
+                    <td className="py-2.5 px-3 whitespace-nowrap text-claude-text-secondary">{p.symbolCode}</td>
+                    <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                      {p.qty.toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                      {p.avgCost.toLocaleString()}円
+                    </td>
+                    <td className="py-2.5 px-3 whitespace-nowrap text-claude-text-secondary">{p.accountType || "---"}</td>
+                    <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="text-red-600 hover:text-red-800 text-xs underline"
+                      >
+                        削除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p className="text-sm text-gray-400 text-center py-4">
+          <p className="text-sm text-claude-text-secondary text-center py-4">
             期首ポジションが登録されていません
           </p>
         )}
