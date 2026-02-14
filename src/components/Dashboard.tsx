@@ -91,37 +91,51 @@ function MissingCostForm({
   };
 
   return (
-    <div className="overflow-x-auto py-2 border-b border-amber-100 last:border-b-0">
-      <div className="flex items-center gap-2 min-w-max">
-        <span className="text-sm text-amber-800 font-medium whitespace-nowrap">
+    <div className="bg-white border border-amber-200 rounded-lg p-3">
+      {/* 銘柄情報ヘッダー */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-sm font-bold text-amber-900">
           {symbol.symbolCode}
         </span>
-        <input
-          type="text"
-          value={symbolName}
-          onChange={(e) => setSymbolName(e.target.value)}
-          className="border border-amber-300 rounded px-2 py-1 text-sm w-28 bg-white shrink-0"
-          placeholder="銘柄名"
-        />
-        <span className="text-xs text-amber-600 whitespace-nowrap">{symbol.shortQty}株</span>
+        <span className="text-xs text-amber-600">{symbol.shortQty}株</span>
         {symbol.accountType && (
-          <span className="text-xs text-amber-500 whitespace-nowrap">[{symbol.accountType}]</span>
+          <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+            {symbol.accountType}
+          </span>
         )}
-        <input
-          type="number"
-          value={avgCost}
-          onChange={(e) => setAvgCost(e.target.value)}
-          className="border border-amber-300 rounded px-2 py-1 text-sm w-24 bg-white shrink-0"
-          placeholder="取得単価"
-          min="0"
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-        />
-        <button
-          onClick={handleSubmit}
-          className="bg-amber-600 text-white px-3 py-1 rounded text-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0"
-        >
-          登録
-        </button>
+      </div>
+      {/* 入力フィールド */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <div className="flex-1 min-w-0">
+          <label className="text-xs text-amber-600 block mb-0.5">銘柄名</label>
+          <input
+            type="text"
+            value={symbolName}
+            onChange={(e) => setSymbolName(e.target.value)}
+            className="border border-amber-300 rounded px-2 py-1.5 text-sm w-full bg-white"
+            placeholder="銘柄名"
+          />
+        </div>
+        <div className="w-full sm:w-32 shrink-0">
+          <label className="text-xs text-amber-600 block mb-0.5">取得単価 (円)</label>
+          <input
+            type="number"
+            value={avgCost}
+            onChange={(e) => setAvgCost(e.target.value)}
+            className="border border-amber-300 rounded px-2 py-1.5 text-sm w-full bg-white"
+            placeholder="例: 1500"
+            min="0"
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          />
+        </div>
+        <div className="shrink-0 sm:self-end">
+          <button
+            onClick={handleSubmit}
+            className="bg-amber-600 text-white px-4 py-1.5 rounded text-sm hover:bg-amber-700 transition-colors w-full sm:w-auto"
+          >
+            登録
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -235,7 +249,7 @@ export function Dashboard({ trades, missingCostSymbols, onAddPosition }: Props) 
             以下で取得単価を入力すると損益が再計算されます。
           </p>
           {missingCostSymbols.length > 0 && onAddPosition && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {missingCostSymbols.map((s) => (
                 <MissingCostForm
                   key={`${s.symbolCode}-${s.accountType}`}

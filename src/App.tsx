@@ -112,13 +112,23 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
-            取引損益ビューア
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            SBI証券 約定履歴CSVを読み込み、実現損益を可視化します
-          </p>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">
+              取引損益ビューア
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              SBI証券 約定履歴CSVを読み込み、実現損益を可視化します
+            </p>
+          </div>
+          <a
+            href="https://fujiai469-del.github.io/torihiki/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-blue-500 hover:text-blue-700 hover:underline transition-colors shrink-0 ml-4"
+          >
+            fujiai469-del.github.io/torihiki
+          </a>
         </div>
       </header>
 
